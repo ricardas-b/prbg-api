@@ -22,8 +22,9 @@ class TagListField(serializers.Field):
 
     def to_representation(self, quote_id):
         tag_ids = QuoteTag.objects.filter(quote_id=quote_id).values_list('tag_id')
-        tag_values = Tag.objects.filter(pk__in=tag_ids).values_list('tag', flat=True)
-        return tag_values
+        items = Tag.objects.filter(pk__in=tag_ids).values_list('id', 'tag')
+        tags = [{'id': id, 'tag': tag} for id, tag in items]
+        return tags
 
     def to_internal_value(self, data):
         raise NotImplementedError
@@ -36,7 +37,7 @@ class QuoteSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Quote
-        fields = ['id', 'text', 'author', 'book', 'date', 'language', 'length_in_words', 'comment', 'rating', 'tags']
+        fields = ['id', 'text', 'author', 'book', 'date', 'language', 'length_in_words', 'editors_comment', 'rating', 'tags']
 
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):

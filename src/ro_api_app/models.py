@@ -33,7 +33,7 @@ class Quote(models.Model):
     date = models.DateField(null=True, blank=True)
     language = models.CharField(max_length=64)
     length_in_words = models.IntegerField(null=True, blank=True)
-    comment = models.TextField(null=True, blank=True)
+    editors_comment = models.TextField(null=True, blank=True)
     rating = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
