@@ -6,7 +6,9 @@ from .serializers import AuthorSerializer, BookSerializer, QuoteSerializer, TagS
 from .utils import levenshtein_distance
 
 
-QUERY_SIZE = 10
+STARTS_WITH_QUERY_SIZE = 10
+CONTAINS_QUERY_SIZE = 10
+SIMILAR_TO_QUERY_SIZE = 5
 
 
 class AuthorList(ListAPIView):
@@ -66,23 +68,40 @@ class TagList(ListAPIView):
         if 'starts_with' in self.request.query_params:
             substr = self.request.query_params.get('starts_with', None)
             if substr:
-                tags = Tag.objects.filter(tag__startswith=substr).order_by('tag')[:QUERY_SIZE]
+                tags = Tag.objects.filter(tag__startswith=substr).order_by('tag')[:STARTS_WITH_QUERY_SIZE]
 
         elif 'contains' in self.request.query_params:
             substr = self.request.query_params.get('contains', None)
             if substr:
-                tags = Tag.objects.filter(tag__contains=substr).order_by('tag')[:QUERY_SIZE]
+                tags = Tag.objects.filter(tag__contains=substr).order_by('tag')[:CONTAINS_QUERY_SIZE]
 
         elif 'similar_to' in self.request.query_params:
             substr = self.request.query_params.get('similar_to', None)
+
             if substr:
-                similar_tag_ids = []
+                items = []
 
                 for tag_obj in Tag.objects.all():
-                    if levenshtein_distance(tag_obj.tag, substr) <= 1:   # TODO: Implement
-                        similar_tag_ids.append(tag_obj.id)
+                    # Only compare a part (the beginning) of tag string, which
+                    # is sliced to the same length as search substring (this
+                    # approach gives more relevant results)
+                    items.append((tag_obj, levenshtein_distance(substr, tag_obj.tag[:len(substr)])))
 
-                tags = Tag.objects.filter(id__in=similar_tag_ids).order_by('tag')[:QUERY_SIZE]
+                # Only consider tags that start with the same letter as search substring
+                items = [item for item in items if item[0].tag[0] == substr[0]]
+
+                # Sort by similarity (smallest Levenshtein distance first) and
+                # then alphabetically (affects only the tags that have the same
+                # similarity value)
+                items.sort(key=lambda item: (item[1], item[0].tag))
+
+                items = items[:SIMILAR_TO_QUERY_SIZE]
+
+                # Drop tags that have Levenshtein distance > 3 to get more relevant results
+                items = [item for item in items if item[1] <= 3]
+
+                tags = [item[0] for item in items]   # Strip away tag similarity values
+
 
         return tags
 
