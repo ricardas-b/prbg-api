@@ -7,9 +7,7 @@ from .serializers import AuthorSerializer, BookSerializer, QuoteSerializer, TagS
 from .utils import levenshtein_distance
 
 
-STARTS_WITH_QUERY_SIZE = 10
-CONTAINS_QUERY_SIZE = 10
-SIMILAR_TO_QUERY_SIZE = 5
+SIMILAR_TO_QUERY_SIZE = 50
 
 
 class AuthorList(ListAPIView):
@@ -85,12 +83,12 @@ class TagList(ListAPIView):
         if 'starts_with' in self.request.query_params:
             substr = self.request.query_params.get('starts_with', None)
             if substr:
-                tags = Tag.objects.filter(tag__startswith=substr).order_by('tag')[:STARTS_WITH_QUERY_SIZE]
+                tags = Tag.objects.filter(tag__startswith=substr).order_by('tag')
 
         elif 'contains' in self.request.query_params:
             substr = self.request.query_params.get('contains', None)
             if substr:
-                tags = Tag.objects.filter(tag__contains=substr).order_by('tag')[:CONTAINS_QUERY_SIZE]
+                tags = Tag.objects.filter(tag__contains=substr).order_by('tag')
 
         elif 'similar_to' in self.request.query_params:
             substr = self.request.query_params.get('similar_to', None)
@@ -112,8 +110,6 @@ class TagList(ListAPIView):
                 # then alphabetically (affects only the tags that have the same
                 # similarity value)
                 selected_items.sort(key=lambda item: (item[1], item[0].tag))
-
-                selected_items = selected_items[:SIMILAR_TO_QUERY_SIZE]
 
                 # Drop tags that have Levenshtein distance > 3 to get more relevant results
                 selected_items = [item for item in selected_items if item[1] <= 3]
