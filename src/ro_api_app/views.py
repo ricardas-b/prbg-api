@@ -96,16 +96,17 @@ class TagList(ListAPIView):
             substr = self.request.query_params.get('similar_to', None)
 
             if substr:
-                items = []
+                selected_items = []
 
                 for tag_obj in Tag.objects.all():
-                    # Only compare a part (the beginning) of tag string, which
-                    # is sliced to the same length as search substring (this
-                    # approach gives more relevant results)
-                    items.append((tag_obj, levenshtein_distance(substr, tag_obj.tag[:len(substr)])))
 
-                # Only consider tags that start with the same letter as search substring
-                selected_items = [item for item in items if item[0].tag[0] == substr[0]]
+                    # Only consider tags that start with the same letter as search substring
+                    if tag_obj.tag[0] == substr[0]:
+
+                        # Only compare a part (the beginning) of tag string, which
+                        # is sliced to the same length as search substring (this
+                        # approach gives more relevant results)
+                        selected_items.append((tag_obj, levenshtein_distance(substr, tag_obj.tag[:len(substr)])))
 
                 # Sort by similarity (smallest Levenshtein distance first) and
                 # then alphabetically (affects only the tags that have the same
