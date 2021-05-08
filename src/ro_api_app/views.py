@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.response import Response
 
@@ -12,11 +13,23 @@ SIMILAR_TO_QUERY_SIZE = 5
 
 
 class AuthorList(ListAPIView):
-    queryset = Author.objects.all()
     serializer_class = AuthorSerializer
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        authors = Author.objects.all()  # Return full list of Authors in case no filtering is applied
+
+        if 'contains' in self.request.query_params:
+            substr = self.request.query_params.get('contains', None)
+            if substr:
+                authors = Author.objects.filter(
+                    Q(first_name__contains=substr) |
+                    Q(middle_name__contains=substr) |
+                    Q(last_name__contains=substr)).order_by('last_name')
+
+        return authors
 
 
 class AuthorDetails(GenericAPIView):
