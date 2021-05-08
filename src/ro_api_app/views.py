@@ -1,3 +1,5 @@
+import datetime
+
 from django.db.models import Q
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.response import Response
@@ -38,11 +40,37 @@ class AuthorDetails(GenericAPIView):
 
 
 class BookList(ListAPIView):
-    queryset = Book.objects.all()
     serializer_class = BookSerializer
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        books = Book.objects.all()
+
+        # TODO: Implement joining all present parameters to one query with AND
+
+        if 'contains' in self.request.query_params:
+            substr = self.request.query_params.get('contains', None)
+            if substr:
+                books = Book.objects.filter(
+                    Q(title__contains=substr) |
+                    Q(subtitle__contains=substr)).order_by('title')
+
+        elif 'year' in self.request.query_params:
+            year = self.request.query_params.get('year', None)
+            if year:
+                books = Book.objects.filter(year__exact=year).order_by('title')
+
+        elif 'isbn' in self.request.query_params:
+            isbn = self.request.query_params.get('isbn', None)
+            books = Book.objects.filter(isbn__exact=isbn).order_by('title')
+
+        elif 'author' in self.request.query_params:
+            author = self.request.query_params.get('author', None)
+            books = Book.objects.filter(author_id__exact=author).order_by('title')
+
+        return books
 
 
 class BookDetails(GenericAPIView):
@@ -78,7 +106,7 @@ class TagList(ListAPIView):
             "starts_with", "contains", "similar_to") to specify the type of
             search and a search string. For example, tags/?similar_to=kultur '''
 
-        tags = Tag.objects.all()   # Return full list of Tags in case no filtering is applied
+        tags = Tag.objects.all()
 
         if 'starts_with' in self.request.query_params:
             substr = self.request.query_params.get('starts_with', None)
@@ -115,7 +143,6 @@ class TagList(ListAPIView):
                 selected_items = [item for item in selected_items if item[1] <= 2]
 
                 tags = [item[0] for item in selected_items]   # Strip away tag similarity values
-
 
         return tags
 

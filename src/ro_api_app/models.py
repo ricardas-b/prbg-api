@@ -18,7 +18,7 @@ class Book(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     title = models.CharField(max_length=512)
     subtitle = models.CharField(max_length=1024, null=True, blank=True)
-    year = models.DateField()
+    year = models.IntegerField()
     publisher = models.CharField(max_length=256)
     isbn = models.CharField(max_length=13)
 
