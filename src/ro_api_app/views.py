@@ -112,7 +112,7 @@ class TagList(ListAPIView):
                 selected_items.sort(key=lambda item: (item[1], item[0].tag))
 
                 # Drop tags that have Levenshtein distance > 3 to get more relevant results
-                selected_items = [item for item in selected_items if item[1] <= 3]
+                selected_items = [item for item in selected_items if item[1] <= 2]
 
                 tags = [item[0] for item in selected_items]   # Strip away tag similarity values
 
