@@ -63,7 +63,11 @@ class TagList(ListAPIView):
         return self.list(request, *args, **kwargs)
 
     def get_queryset(self):
-        tags = Tag.objects.all()   # Fallback
+        ''' Tags can be filtered down by providing search keywords (like
+            "starts_with", "contains", "similar_to") to specify the type of
+            search and a search string. For example, tags/?similar_to=kultur '''
+
+        tags = Tag.objects.all()   # Return full list of Tags in case no filtering is applied
 
         if 'starts_with' in self.request.query_params:
             substr = self.request.query_params.get('starts_with', None)
@@ -88,19 +92,19 @@ class TagList(ListAPIView):
                     items.append((tag_obj, levenshtein_distance(substr, tag_obj.tag[:len(substr)])))
 
                 # Only consider tags that start with the same letter as search substring
-                items = [item for item in items if item[0].tag[0] == substr[0]]
+                selected_items = [item for item in items if item[0].tag[0] == substr[0]]
 
                 # Sort by similarity (smallest Levenshtein distance first) and
                 # then alphabetically (affects only the tags that have the same
                 # similarity value)
-                items.sort(key=lambda item: (item[1], item[0].tag))
+                selected_items.sort(key=lambda item: (item[1], item[0].tag))
 
-                items = items[:SIMILAR_TO_QUERY_SIZE]
+                selected_items = selected_items[:SIMILAR_TO_QUERY_SIZE]
 
                 # Drop tags that have Levenshtein distance > 3 to get more relevant results
-                items = [item for item in items if item[1] <= 3]
+                selected_items = [item for item in selected_items if item[1] <= 3]
 
-                tags = [item[0] for item in items]   # Strip away tag similarity values
+                tags = [item[0] for item in selected_items]   # Strip away tag similarity values
 
 
         return tags
