@@ -27,12 +27,12 @@ class AuthorList(ListAPIView):
                 authors = authors.filter(
                     Q(first_name__contains=substr) |
                     Q(middle_name__contains=substr) |
-                    Q(last_name__contains=substr)).order_by('last_name')
+                    Q(last_name__contains=substr))
 
         if not hasattr(authors, 'query'):   # Return full list of Authors in case no filtering is applied
             authors = Author.objects.all()
 
-        return authors
+        return authors.order_by('last_name')
 
 
 class AuthorDetails(GenericAPIView):
@@ -56,20 +56,20 @@ class BookList(ListAPIView):
             if substr:
                 books = books.filter(
                     Q(title__contains=substr) |
-                    Q(subtitle__contains=substr)).order_by('title')
+                    Q(subtitle__contains=substr))
 
         if 'year' in self.request.query_params:
             year = self.request.query_params.get('year', None)
             if year:
-                books = books.filter(year__exact=year).order_by('title')
+                books = books.filter(year__exact=year)
 
         if 'isbn' in self.request.query_params:
             isbn = self.request.query_params.get('isbn', None)
-            books = books.filter(isbn__exact=isbn).order_by('title')
+            books = books.filter(isbn__exact=isbn)
 
         if 'author' in self.request.query_params:
             author = self.request.query_params.get('author', None)
-            books = books.filter(author_id__exact=author).order_by('title')
+            books = books.filter(author_id__exact=author)
 
         # Check if any filters have been applied. When a filter is applied,
         # <books> gets 'query' parameter which stores a string with an SQL
@@ -78,7 +78,7 @@ class BookList(ListAPIView):
         if not hasattr(books, 'query'):
             books = Book.objects.all()
 
-        return books
+        return books.order_by('title')
 
 
 class BookDetails(GenericAPIView):
