@@ -1,5 +1,3 @@
-import datetime
-
 from django.db.models import Q
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.response import Response
@@ -7,9 +5,6 @@ from rest_framework.response import Response
 from .models import Author, Book, Quote, Tag
 from .serializers import AuthorSerializer, BookSerializer, QuoteSerializer, TagSerializer
 from .utils import levenshtein_distance
-
-
-SIMILAR_TO_QUERY_SIZE = 50
 
 
 class AuthorList(ListAPIView):
@@ -28,6 +23,10 @@ class AuthorList(ListAPIView):
                     Q(first_name__contains=substr) |
                     Q(middle_name__contains=substr) |
                     Q(last_name__contains=substr))
+
+        # Check if any filters have been applied. When a filter is applied,
+        # <books> gets 'query' parameter which stores a string with an SQL
+        # statement. In case of no filters:
 
         if not hasattr(authors, 'query'):   # Return full list of Authors in case no filtering is applied
             authors = Author.objects.all()
@@ -70,10 +69,6 @@ class BookList(ListAPIView):
         if 'author' in self.request.query_params:
             author = self.request.query_params.get('author', None)
             books = books.filter(author_id__exact=author)
-
-        # Check if any filters have been applied. When a filter is applied,
-        # <books> gets 'query' parameter which stores a string with an SQL
-        # statement. In case of no filters:
 
         if not hasattr(books, 'query'):
             books = Book.objects.all()
