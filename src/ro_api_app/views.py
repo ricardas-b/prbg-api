@@ -152,7 +152,6 @@ class QuoteList(ListAPIView):
 
         if 'tags' in self.request.query_params:
             tags = self.request.query_params.get('tags', None)   # Expecting URL like "quotes/?tags=1,2,3"
-            print('tags', tags)
             if tags:
                 try:
                     # Get submitted tag ids as list. Find all quotes that are
@@ -206,25 +205,30 @@ class TagList(ListAPIView):
             "starts_with", "contains", "similar_to") to specify the type of
             search and a search string. For example, tags/?similar_to=kultur '''
 
-        tags = Tag.objects.all()
+        tags = Tag.objects
 
         if 'starts_with' in self.request.query_params:
             substr = self.request.query_params.get('starts_with', None)
             if substr:
-                tags = Tag.objects.filter(tag__startswith=substr).order_by('tag')
+                tags = tags.filter(tag__startswith=substr)
+            else:
+                tags = tags.none()
 
-        elif 'contains' in self.request.query_params:
+        if 'contains' in self.request.query_params:
             substr = self.request.query_params.get('contains', None)
             if substr:
-                tags = Tag.objects.filter(tag__contains=substr).order_by('tag')
+                tags = tags.filter(tag__contains=substr)
+            else:
+                tags = tags.none()
 
-        elif 'similar_to' in self.request.query_params:
+        if 'similar_to' in self.request.query_params:
             substr = self.request.query_params.get('similar_to', None)
 
             if substr:
                 selected_items = []
 
-                for tag_obj in Tag.objects.all():
+                #for tag_obj in Tag.objects.all():
+                for tag_obj in tags.all():
 
                     # Only consider tags that start with the same letter as search substring
                     if tag_obj.tag[0] == substr[0]:
@@ -243,8 +247,15 @@ class TagList(ListAPIView):
                 selected_items = [item for item in selected_items if item[1] <= 2]
 
                 tags = [item[0] for item in selected_items]   # Strip away tag similarity values
+                return tags
 
-        return tags
+            else:
+                tags = tags.none()
+        
+        if not hasattr(tags, 'query'):
+            tags = Tag.objects.all()
+
+        return tags.order_by('tag')
 
 
 class TagDetails(GenericAPIView):
