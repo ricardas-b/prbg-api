@@ -46,29 +46,34 @@ class BookList(ListAPIView):
         return self.list(request, *args, **kwargs)
 
     def get_queryset(self):
-        books = Book.objects.all()
-
-        # TODO: Implement joining all present parameters to one query with AND
+        books = Book.objects
 
         if 'contains' in self.request.query_params:
             substr = self.request.query_params.get('contains', None)
             if substr:
-                books = Book.objects.filter(
+                books = books.filter(
                     Q(title__contains=substr) |
                     Q(subtitle__contains=substr)).order_by('title')
 
-        elif 'year' in self.request.query_params:
+        if 'year' in self.request.query_params:
             year = self.request.query_params.get('year', None)
             if year:
-                books = Book.objects.filter(year__exact=year).order_by('title')
+                books = books.filter(year__exact=year).order_by('title')
 
-        elif 'isbn' in self.request.query_params:
+        if 'isbn' in self.request.query_params:
             isbn = self.request.query_params.get('isbn', None)
-            books = Book.objects.filter(isbn__exact=isbn).order_by('title')
+            books = books.filter(isbn__exact=isbn).order_by('title')
 
-        elif 'author' in self.request.query_params:
+        if 'author' in self.request.query_params:
             author = self.request.query_params.get('author', None)
-            books = Book.objects.filter(author_id__exact=author).order_by('title')
+            books = books.filter(author_id__exact=author).order_by('title')
+
+        # Check if any filters have been applied. When a filter is applied,
+        # <books> gets 'query' parameter which stores a string with an SQL
+        # statement. In case of no filters:
+
+        if not hasattr(books, 'query'):
+            books = Book.objects.all()
 
         return books
 
