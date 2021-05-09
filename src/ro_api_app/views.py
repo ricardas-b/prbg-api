@@ -1,8 +1,10 @@
+import datetime
+
 from django.db.models import Q
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.response import Response
 
-from .models import Author, Book, Quote, Tag
+from .models import Author, Book, Quote, QuoteTag, Tag
 from .serializers import AuthorSerializer, BookSerializer, QuoteSerializer, TagSerializer
 from .utils import levenshtein_distance
 
@@ -63,12 +65,12 @@ class BookList(ListAPIView):
                 books = books.filter(year__exact=year)
 
         if 'isbn' in self.request.query_params:
-            isbn = self.request.query_params.get('isbn', None)
+            isbn = self.request.query_params.get('isbn', None)   # TODO: Check if <isbn>, <author> strings are not empty
             books = books.filter(isbn__exact=isbn)
 
         if 'author' in self.request.query_params:
             author = self.request.query_params.get('author', None)
-            books = books.filter(author_id__exact=author)
+            books = books.filter(author_id__exact=author)   # TODO: Wrap into try/except to catch ValueError's
 
         if not hasattr(books, 'query'):
             books = Book.objects.all()
@@ -84,11 +86,77 @@ class BookDetails(GenericAPIView):
 
 
 class QuoteList(ListAPIView):
-    queryset = Quote.objects.all()
     serializer_class = QuoteSerializer
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        quotes = Quote.objects
+
+        if 'contains' in self.request.query_params:
+            substr = self.request.query_params.get('contains', None)
+            if substr:
+                quotes = quotes.filter(text__contains=substr)
+
+        if 'date' in self.request.query_params:
+            date = self.request.query_params.get('date', None)
+            if date:
+                try:
+                    date = datetime.datetime.strptime(date, '%Y-%m-%d')
+                    quotes = quotes.filter(date__exact=date)
+                except ValueError as e:
+                    quotes = quotes.none()
+
+        if 'author' in self.request.query_params:
+            author = self.request.query_params.get('author', None)
+            if author:
+                try:
+                    quotes = quotes.filter(author_id__exact=author)
+                except ValueError as e:
+                    quotes = quotes.none()
+
+        if 'book' in self.request.query_params:
+            book = self.request.query_params.get('book', None)
+            if book:
+                try:
+                    quotes = quotes.filter(book_id__exact=book)
+                except ValueError as e:
+                    quotes = quotes.none()
+
+        if 'tags' in self.request.query_params:
+            tags = self.request.query_params.get('tags', None)   # Expecting URL like "quotes/?tags=1,2,3"
+            print('tags', tags)
+            if tags:
+                try:
+                    # Get submitted tag ids as list. Find all quotes that are
+                    # tagged with *ALL* of these tags
+
+                    # TODO: Find a way to refactor the code to make it simpler
+
+                    submitted_tag_ids = {int(t) for t in tags.split(',')}   # For example, {10, 6}
+                    quote_tag_matches = QuoteTag.objects.filter(tag_id__in=submitted_tag_ids).values_list('quote_id', 'tag_id')   # <QuerySet [(4, 6), (8, 6), (4, 10)]>
+                    quote_ids = {qt[0] for qt in quote_tag_matches}   # {8, 4}
+                    tags_by_quote = {id: set() for id in quote_ids}   # {8: set(), 4: set()}
+
+                    for q_id, t_id in quote_tag_matches:   # {8: {6}, 4: {10, 6}}
+                        tags_by_quote[q_id].add(t_id)
+
+                    matching_quote_ids = []
+
+                    for q_id, t_ids in  tags_by_quote.items():
+                        if t_ids == submitted_tag_ids:   # {10, 6} == {10, 6}
+                            matching_quote_ids.append(q_id)
+
+                    quotes = quotes.filter(id__in=matching_quote_ids)
+
+                except ValueError as e:
+                    quotes = quotes.none()
+
+        if not hasattr(quotes, 'query'):
+            quotes = Quote.objects.all()
+
+        return quotes.order_by('text')
 
 
 class QuoteDetails(GenericAPIView):
