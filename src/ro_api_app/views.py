@@ -19,15 +19,18 @@ class AuthorList(ListAPIView):
         return self.list(request, *args, **kwargs)
 
     def get_queryset(self):
-        authors = Author.objects.all()  # Return full list of Authors in case no filtering is applied
+        authors = Author.objects
 
         if 'contains' in self.request.query_params:
             substr = self.request.query_params.get('contains', None)
             if substr:
-                authors = Author.objects.filter(
+                authors = authors.filter(
                     Q(first_name__contains=substr) |
                     Q(middle_name__contains=substr) |
                     Q(last_name__contains=substr)).order_by('last_name')
+
+        if not hasattr(authors, 'query'):   # Return full list of Authors in case no filtering is applied
+            authors = Author.objects.all()
 
         return authors
 
