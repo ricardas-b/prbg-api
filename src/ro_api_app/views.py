@@ -25,6 +25,8 @@ class AuthorList(ListAPIView):
                     Q(first_name__contains=substr) |
                     Q(middle_name__contains=substr) |
                     Q(last_name__contains=substr))
+            else:
+                authors = authors.none()
 
         # Check if any filters have been applied. When a filter is applied,
         # <books> gets 'query' parameter which stores a string with an SQL
@@ -58,19 +60,35 @@ class BookList(ListAPIView):
                 books = books.filter(
                     Q(title__contains=substr) |
                     Q(subtitle__contains=substr))
+            else:
+                books = books.none()
 
         if 'year' in self.request.query_params:
             year = self.request.query_params.get('year', None)
             if year:
-                books = books.filter(year__exact=year)
+                try:
+                    books = books.filter(year__exact=year)
+                except ValueError as e:
+                    books = books.none()
+            else:
+                books = books.none()
 
         if 'isbn' in self.request.query_params:
-            isbn = self.request.query_params.get('isbn', None)   # TODO: Check if <isbn>, <author> strings are not empty
-            books = books.filter(isbn__exact=isbn)
+            isbn = self.request.query_params.get('isbn', None)
+            if isbn:
+                books = books.filter(isbn__exact=isbn)
+            else:
+                books = books.none()
 
         if 'author' in self.request.query_params:
             author = self.request.query_params.get('author', None)
-            books = books.filter(author_id__exact=author)   # TODO: Wrap into try/except to catch ValueError's
+            if author:
+                try:
+                    books = books.filter(author_id__exact=author)
+                except ValueError as e:
+                    books = books.none()
+            else:
+                books = books.none()
 
         if not hasattr(books, 'query'):
             books = Book.objects.all()
@@ -98,6 +116,8 @@ class QuoteList(ListAPIView):
             substr = self.request.query_params.get('contains', None)
             if substr:
                 quotes = quotes.filter(text__contains=substr)
+            else:
+                quotes = quotes.none()
 
         if 'date' in self.request.query_params:
             date = self.request.query_params.get('date', None)
@@ -107,6 +127,8 @@ class QuoteList(ListAPIView):
                     quotes = quotes.filter(date__exact=date)
                 except ValueError as e:
                     quotes = quotes.none()
+            else:
+                quotes = quotes.none()
 
         if 'author' in self.request.query_params:
             author = self.request.query_params.get('author', None)
@@ -115,6 +137,8 @@ class QuoteList(ListAPIView):
                     quotes = quotes.filter(author_id__exact=author)
                 except ValueError as e:
                     quotes = quotes.none()
+            else:
+                quotes = quotes.none()
 
         if 'book' in self.request.query_params:
             book = self.request.query_params.get('book', None)
@@ -123,6 +147,8 @@ class QuoteList(ListAPIView):
                     quotes = quotes.filter(book_id__exact=book)
                 except ValueError as e:
                     quotes = quotes.none()
+            else:
+                quotes = quotes.none()
 
         if 'tags' in self.request.query_params:
             tags = self.request.query_params.get('tags', None)   # Expecting URL like "quotes/?tags=1,2,3"
@@ -152,6 +178,9 @@ class QuoteList(ListAPIView):
 
                 except ValueError as e:
                     quotes = quotes.none()
+
+            else:
+                quotes = quotes.none()
 
         if not hasattr(quotes, 'query'):
             quotes = Quote.objects.all()
