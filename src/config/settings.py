@@ -23,7 +23,7 @@ INSTALLED_APPS = [
 
     'rest_framework',   # 3rd party apps
 
-    'ro_api_app',   # Local apps
+    'api_app',   # Local apps
 
 ]
 
