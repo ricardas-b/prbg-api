@@ -1,0 +1,440 @@
+openapi: 3.0.0
+info:
+  title: prbg-api
+  version: 1.0.0
+  description: Authors and their books, quotes and associated tags
+servers:
+  - url:
+     http://localhost:8000/api/vi
+paths:
+  /authors:
+    get:
+      operationId: listAuthors
+      description: ''
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set
+        schema:
+          type: integer
+          example: 2
+      - name: contains
+        required: false
+        in: query
+        description: Search for authors by substring
+        schema:
+          type: string
+          example: "baltuš"
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=4
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=2
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Author'
+          description: ''
+      tags:
+      - api
+  /books:
+    get:
+      operationId: listBooks
+      description: ''
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set
+        schema:
+          type: integer
+          example: 2
+      - name: contains
+        required: false
+        in: query
+        description: Search for books by substring
+        schema:
+          type: string
+          example: "dienor"
+      - name: year
+        required: false
+        in: query
+        description: Search for quotes by publication year
+        schema:
+          type: integer
+          example: 2019
+      - name: isbn
+        required: false
+        in: query
+        description: Search for books by ISBN
+        schema:
+          type: string
+          example: "9786094800580"
+      - name: author
+        required: false
+        in: query
+        description: Search for books by author ID
+        schema:
+          type: integer
+          example: 1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=4
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=2
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Book'
+          description: ''
+      tags:
+      - api
+  /quotes:
+    get:
+      operationId: listQuotes
+      description: ''
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set
+        schema:
+          type: integer
+          example: 2
+      - name: contains
+        required: false
+        in: query
+        description: Search for quotes by substring
+        schema:
+          type: string
+          example: "vairuo"
+      - name: date
+        required: false
+        in: query
+        description: Search for quotes by date
+        schema:
+          type: string
+          example: "1970-03-28"
+      - name: author
+        required: false
+        in: query
+        description: Search for quotes by author ID
+        schema:
+          type: integer
+          example: 1
+      - name: book
+        required: false
+        in: query
+        description: Search for quotes by book ID
+        schema:
+          type: integer
+          example: 3
+      - name: tags
+        required: false
+        in: query
+        description: Search for quotes by tag IDs
+        schema:
+          type: string
+          example: "1,2,3, ..."
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=4
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=2
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Quote'
+          description: ''
+      tags:
+      - api
+  /tags:
+    get:
+      operationId: listTags
+      description: ''
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set
+        schema:
+          type: integer
+      - name: starts_with
+        required: false
+        in: query
+        description: Search for tags by substring
+        schema:
+          type: string
+          example: "komun"
+      - name: contains
+        required: false
+        in: query
+        description: Search for tags by substring
+        schema:
+          type: string
+          example: "izm"
+      - name: similar_to
+        required: false
+        in: query
+        description: Search for tags by substring
+        schema:
+          type: string
+          example: "kuriba"
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=4
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=2
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tag'
+          description: ''
+      tags:
+      - api
+  /authors/{id}:
+    get:
+      operationId: retrieveAuthor
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+          description: ''
+      tags:
+      - api
+  /books/{id}:
+    get:
+      operationId: retrieveBook
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+          description: ''
+      tags:
+      - api
+  /quotes/{id}:
+    get:
+      operationId: retrieveQuote
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+          description: ''
+      tags:
+      - api
+  /tags/{id}:
+    get:
+      operationId: retrieveTag
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+          description: ''
+      tags:
+      - api
+components:
+  schemas:
+    Author:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        first_name:
+          type: string
+          nullable: true
+          maxLength: 64
+        middle_name:
+          type: string
+          nullable: true
+          maxLength: 64
+        last_name:
+          type: string
+          maxLength: 64
+        date_of_birth:
+          type: string
+          format: date
+        nationality:
+          type: string
+          maxLength: 64
+      required:
+      - last_name
+      - date_of_birth
+      - nationality
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        author:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          maxLength: 512
+        subtitle:
+          type: string
+          nullable: true
+          maxLength: 1024
+        year:
+          type: integer
+        publisher:
+          type: string
+          maxLength: 256
+        isbn:
+          type: string
+          maxLength: 13
+      required:
+      - title
+      - year
+      - publisher
+      - isbn
+    Quote:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        text:
+          type: string
+        author:
+          type: string
+          readOnly: true
+        book:
+          type: string
+          readOnly: true
+        date:
+          type: string
+          format: date
+          nullable: true
+        language:
+          type: string
+          maxLength: 64
+        length_in_words:
+          type: integer
+          nullable: true
+        editors_comment:
+          type: string
+          nullable: true
+        rating:
+          type: integer
+          nullable: true
+        tags:
+          type: string
+      required:
+      - text
+      - language
+      - tags
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tag:
+          type: string
+          maxLength: 64
+      required:
+      - tag
