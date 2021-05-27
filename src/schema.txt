@@ -313,6 +313,19 @@ paths:
           description: ''
       tags:
       - api
+  /quotes/random:
+    get:
+      operationId: retrieveRandomQuote
+      description: ''
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+          description: ''
+      tags:
+      - api
   /tags/{id}:
     get:
       operationId: retrieveTag

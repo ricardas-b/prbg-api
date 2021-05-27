@@ -1,4 +1,5 @@
 import datetime
+import random
 
 from django.db.models import Q
 from rest_framework.generics import GenericAPIView, ListAPIView
@@ -264,3 +265,11 @@ class TagDetails(GenericAPIView):
         serializer = TagSerializer(tag, context={'request': request})
         return Response(serializer.data)
 
+
+class RandomQuoteDetails(GenericAPIView):
+    def get(self, request, format=None):
+        pks = Quote.objects.values_list('pk', flat=True)
+        random_pk = random.choice(pks)
+        random_quote = Quote.objects.get(pk=random_pk)
+        serializer = QuoteSerializer(random_quote, context={'request': request})
+        return Response(serializer.data)

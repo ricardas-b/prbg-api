@@ -13,5 +13,6 @@ urlpatterns = [
     path('books/<int:pk>/', views.BookDetails.as_view(), name='book-details'),
     path('quotes/<int:pk>/', views.QuoteDetails.as_view(), name='quote-details'),
     path('tags/<int:pk>/', views.TagDetails.as_view(), name='tag-details'),
+    path('quotes/random/', views.RandomQuoteDetails.as_view(), name='random-quote-details'),
 
 ]
