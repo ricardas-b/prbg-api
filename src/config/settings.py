@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',   # 3rd party apps
+    'corsheaders',
 
     'api_app',   # Local apps
 
@@ -31,6 +32,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -117,3 +119,17 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 25,
 
 }
+
+
+# Enable CORS headers. It is needed to enable 3rd parties to build frontends
+# on top of this API (CORS allows API resources to be accessed from other
+# domains than the API domain)
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOW_METHODS = [
+    'GET',
+    'OPTIONS',
+]
+
+
