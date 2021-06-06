@@ -211,14 +211,14 @@ class TagList(ListAPIView):
         if 'starts_with' in self.request.query_params:
             substr = self.request.query_params.get('starts_with', None)
             if substr:
-                tags = tags.filter(tag__startswith=substr)
+                tags = tags.filter(name__startswith=substr)
             else:
                 tags = tags.none()
 
         if 'contains' in self.request.query_params:
             substr = self.request.query_params.get('contains', None)
             if substr:
-                tags = tags.filter(tag__contains=substr)
+                tags = tags.filter(name__contains=substr)
             else:
                 tags = tags.none()
 
@@ -256,7 +256,7 @@ class TagList(ListAPIView):
         if not hasattr(tags, 'query'):
             tags = Tag.objects.all()
 
-        return tags.order_by('tag')
+        return tags.order_by('name')
 
 
 class TagDetails(GenericAPIView):

@@ -22,8 +22,8 @@ class TagListField(serializers.Field):
 
     def to_representation(self, quote_id):
         tag_ids = QuoteTag.objects.filter(quote_id=quote_id).values_list('tag_id')
-        items = Tag.objects.filter(pk__in=tag_ids).values_list('id', 'tag')
-        tags = [{'id': id, 'tag': tag} for id, tag in items]
+        items = Tag.objects.filter(pk__in=tag_ids).values_list('id', 'name')
+        tags = [{'id': id, 'name': name} for id, name in items]
         return tags
 
     def to_internal_value(self, data):
@@ -43,5 +43,5 @@ class QuoteSerializer(serializers.HyperlinkedModelSerializer):
 class TagSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Tag
-        fields = ['id', 'tag']
+        fields = ['id', 'name']
 

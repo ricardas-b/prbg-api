@@ -41,10 +41,10 @@ class Quote(models.Model):
 
 
 class Tag(models.Model):
-    tag = models.CharField(max_length=64, unique=True)
+    name = models.CharField(max_length=64, unique=True)
 
     def __str__(self):
-        return self.tag
+        return self.name
 
 
 class QuoteTag(models.Model):
