@@ -232,17 +232,17 @@ class TagList(ListAPIView):
                 for tag_obj in tags.all():
 
                     # Only consider tags that start with the same letter as search substring
-                    if tag_obj.tag[0] == substr[0]:
+                    if tag_obj.name[0] == substr[0]:
 
                         # Only compare a part (the beginning) of tag string, which
                         # is sliced to the same length as search substring (this
                         # approach gives more relevant results)
-                        selected_items.append((tag_obj, levenshtein_distance(substr, tag_obj.tag[:len(substr)])))
+                        selected_items.append((tag_obj, levenshtein_distance(substr, tag_obj.name[:len(substr)])))
 
                 # Sort by similarity (smallest Levenshtein distance first) and
                 # then alphabetically (affects only the tags that have the same
                 # similarity value)
-                selected_items.sort(key=lambda item: (item[1], item[0].tag))
+                selected_items.sort(key=lambda item: (item[1], item[0].name))
 
                 # Drop tags that have Levenshtein distance > 3 to get more relevant results
                 selected_items = [item for item in selected_items if item[1] <= 2]
