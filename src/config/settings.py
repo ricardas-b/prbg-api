@@ -1,10 +1,15 @@
+from dotenv import dotenv_values
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = '-0xwuajtn9^2_7ctm8d@#h-^6^vv-gypz4mwpz&^5757ml6l3)'
+# Store sensitive configuration data in a separate ".gitignor'ed" file to avoid
+# adding that data to code repository
+
+env_config = dotenv_values('../.env')
+SECRET_KEY = env_config.get('SECRET_KEY', '')
 
 
 DEBUG = True
