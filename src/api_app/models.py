@@ -8,8 +8,7 @@ class Author(models.Model):
     nationality = models.CharField(max_length=64)
 
     def __str__(self):
-        author = ' '.join([self.first_name, self.middle_name, self.last_name])
-        author = author.replace('  ', ' ')
+        author = ' '.join(filter(bool, [self.first_name, self.middle_name, self.last_name]))   # Filter out blank fields
         author = author.strip()
         return author
 
