@@ -1,0 +1,37 @@
+[
+	{
+		"model": "api_app.Book",
+		"pk": 1,
+		"fields": {
+			"author": 1,
+			"title": "The Tragedy of Hamlet, Prince of Denmark",
+			"year": 1599,
+			"publisher": "",
+			"isbn": ""
+		}
+	},
+	
+	{
+		"model": "api_app.Book",
+		"pk": 2,
+		"fields": {
+			"author": 2,
+			"title": "The Old Man and the Sea",
+			"year": 1952,
+			"publisher": "Charles Scribner's Sons",
+			"isbn": "0684801221"
+		}
+	},
+	
+	{
+		"model": "api_app.Book",
+		"pk": 3,
+		"fields": {
+			"author": 3,
+			"title": "Raštai. II tomas",
+			"year": 1991,
+			"publisher": "Mintis",
+			"isbn": ""
+		}
+	}
+]

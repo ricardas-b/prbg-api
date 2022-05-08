@@ -1,0 +1,55 @@
+[
+	{
+		"model": "api_app.QuoteTag",
+		"pk": 1,
+		"fields": {
+			"quote": 1,
+			"tag": 2
+		}
+	},
+	
+	{
+		"model": "api_app.QuoteTag",
+		"pk": 2,
+		"fields": {
+			"quote": 1,
+			"tag": 3
+		}
+	},
+	
+	{
+		"model": "api_app.QuoteTag",
+		"pk": 3,
+		"fields": {
+			"quote": 1,
+			"tag": 4
+		}
+	},
+	
+	{
+		"model": "api_app.QuoteTag",
+		"pk": 4,
+		"fields": {
+			"quote": 2,
+			"tag": 1
+		}
+	},
+	
+	{
+		"model": "api_app.QuoteTag",
+		"pk": 5,
+		"fields": {
+			"quote": 2,
+			"tag": 3
+		}
+	},
+	
+	{
+		"model": "api_app.QuoteTag",
+		"pk": 6,
+		"fields": {
+			"quote": 3,
+			"tag": 3
+		}
+	}
+]

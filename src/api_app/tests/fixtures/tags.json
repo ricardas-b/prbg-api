@@ -1,0 +1,33 @@
+[
+	{
+		"model": "api_app.Tag",
+		"pk": 1,
+		"fields": {
+			"name": "sea"
+		}
+	},
+	
+	{
+		"model": "api_app.Tag",
+		"pk": 2,
+		"fields": {
+			"name": "prince"
+		}
+	},
+	
+	{
+		"model": "api_app.Tag",
+		"pk": 3,
+		"fields": {
+			"name": "wisdom"
+		}
+	},
+	
+	{
+		"model": "api_app.Tag",
+		"pk": 4,
+		"fields": {
+			"name": "Denmark"
+		}
+	}
+]
