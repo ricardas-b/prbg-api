@@ -2,10 +2,10 @@ import numpy
 
 
 def levenshtein_distance(substring, string):
-    """ Levenshtein distance is a string metric for measuring the difference
+    ''' Levenshtein distance is a string metric for measuring the difference
         between two sequences. Levenshtein distance between two words is the
         minimum number of single-character edits (insertions, deletions or
-        substitutions) required to change one word into the other """
+        substitutions) required to change one word into the other '''
 
     rows = len(substring) + 1
     cols = len(string) + 1
@@ -24,7 +24,7 @@ def levenshtein_distance(substring, string):
             else:
                 distances[r][c] = min(distances[r-1][c-1], distances[r-1][c], distances[r][c-1]) + 1
 
-    return distances[len(substring)][len(string)]
+    return int(distances[len(substring)][len(string)])
 
 
 # TODO: Consider other string similarity metrics, e.g. "Damerau–Levenshtein distance", etc.
