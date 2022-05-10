@@ -140,3 +140,6 @@ CORS_ALLOW_METHODS = [
 ]
 
 
+# Location of files with test data for unit tests 
+
+FIXTURE_DIRS = ['api_app/tests/fixtures', ]

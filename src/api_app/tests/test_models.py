@@ -6,11 +6,11 @@ from api_app.models import Author, Book, Quote, QuoteTag, Tag
 
 class ModelStringRepresentationTests(TestCase):
     fixtures = [
-        'api_app/tests/fixtures/authors.json',
-        'api_app/tests/fixtures/books.json',
-        'api_app/tests/fixtures/quotes.json',
-        'api_app/tests/fixtures/quote_tags.json',
-        'api_app/tests/fixtures/tags.json',
+        'authors.json',
+        'books.json',
+        'quotes.json',
+        'quote_tags.json',
+        'tags.json',
         ]
 
     def test_author_model(self):
@@ -38,7 +38,4 @@ class ModelStringRepresentationTests(TestCase):
     def test_quote_tag_model(self):
         quote_tag = QuoteTag.objects.get(pk=1)
         self.assertEqual(str(quote_tag), '[prince] [William Shakespeare] To be or not to be, that is the question.')
-        
-        
 
-        
