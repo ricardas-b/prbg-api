@@ -30,5 +30,16 @@
 			"book": 3,
 			"language": "Lithuanian"
 		}
+	},
+	
+	{
+		"model": "api_app.Quote",
+		"pk": 4,
+		"fields": {
+			"text": "No animal has more liberty than the cat, but it buries the mess it makes. The cat is the best anarchist.",
+			"author": 2,
+			"book": 5,
+			"language": "English"
+		}
 	}
 ]

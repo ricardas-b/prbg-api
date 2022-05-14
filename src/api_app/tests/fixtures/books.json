@@ -28,9 +28,34 @@
 		"pk": 3,
 		"fields": {
 			"author": 3,
-			"title": "Raštai. II tomas",
+			"title": "Raštai",
+			"subtitle": "II tomas",
 			"year": 1991,
 			"publisher": "Mintis",
+			"isbn": ""
+		}
+	},
+	
+	{
+		"model": "api_app.Book",
+		"pk": 4,
+		"fields": {
+			"author": 2,
+			"title": "A Farewell to Arms",
+			"year": 1929,
+			"publisher": "Charles Scribner's Sons",
+			"isbn": ""
+		}
+	},
+	
+	{
+		"model": "api_app.Book",
+		"pk": 5,
+		"fields": {
+			"author": 2,
+			"title": "For Whom the Bell Tolls",
+			"year": 1940,
+			"publisher": "",
 			"isbn": ""
 		}
 	}

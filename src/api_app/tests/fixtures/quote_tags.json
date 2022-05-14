@@ -51,5 +51,23 @@
 			"quote": 3,
 			"tag": 3
 		}
+	},
+	
+	{
+		"model": "api_app.QuoteTag",
+		"pk": 7,
+		"fields": {
+			"quote": 4,
+			"tag": 3
+		}
+	},
+	
+	{
+		"model": "api_app.QuoteTag",
+		"pk": 8,
+		"fields": {
+			"quote": 4,
+			"tag": 5
+		}
 	}
 ]

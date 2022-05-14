@@ -29,5 +29,13 @@
 		"fields": {
 			"name": "Denmark"
 		}
+	},
+	
+	{
+		"model": "api_app.Tag",
+		"pk": 5,
+		"fields": {
+			"name": "cats"
+		}
 	}
 ]
