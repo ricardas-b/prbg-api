@@ -2,12 +2,24 @@ import datetime
 import random
 
 from django.db.models import Q
+from django.http import Http404
+from rest_framework import status
+from rest_framework.exceptions import NotFound
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.response import Response
 
 from .models import Author, Book, Quote, QuoteTag, Tag
 from .serializers import AuthorSerializer, BookSerializer, QuoteSerializer, TagSerializer
 from .utils import levenshtein_distance
+
+
+
+def get_object(model, pk):
+    try:
+        return model.objects.get(pk=pk)
+    
+    except model.DoesNotExist:
+        raise NotFound()
 
 
 class AuthorList(ListAPIView):
@@ -20,7 +32,7 @@ class AuthorList(ListAPIView):
         authors = Author.objects
 
         if 'contains' in self.request.query_params:
-            substr = self.request.query_params.get('contains', None)
+            substr = self.request.query_params.get('contains', None)   # TODO: Search should ignore case?
             if substr:
                 authors = authors.filter(
                     Q(first_name__contains=substr) |
@@ -41,7 +53,7 @@ class AuthorList(ListAPIView):
 
 class AuthorDetails(GenericAPIView):
     def get(self, request, pk, format=None):
-        author = Author.objects.get(pk=pk)
+        author = get_object(Author, pk)
         serializer = AuthorSerializer(author, context={'request': request})
         return Response(serializer.data)
 
@@ -99,7 +111,7 @@ class BookList(ListAPIView):
 
 class BookDetails(GenericAPIView):
     def get(self, request, pk, format=None):
-        book = Book.objects.get(pk=pk)
+        book = get_object(Book, pk)
         serializer = BookSerializer(book, context={'request': request})
         return Response(serializer.data)
 
@@ -190,7 +202,7 @@ class QuoteList(ListAPIView):
 
 class QuoteDetails(GenericAPIView):
     def get(self, request, pk, format=None):
-        quote = Quote.objects.get(pk=pk)
+        quote = get_object(Quote, pk)
         serializer = QuoteSerializer(quote, context={'request': request})
         return Response(serializer.data)
 
@@ -228,7 +240,6 @@ class TagList(ListAPIView):
             if substr:
                 selected_items = []
 
-                #for tag_obj in Tag.objects.all():
                 for tag_obj in tags.all():
 
                     # Only consider tags that start with the same letter as search substring
@@ -261,7 +272,7 @@ class TagList(ListAPIView):
 
 class TagDetails(GenericAPIView):
     def get(self, request, pk, format=None):
-        tag = Tag.objects.get(pk=pk)
+        tag = get_object(Tag, pk)
         serializer = TagSerializer(tag, context={'request': request})
         return Response(serializer.data)
 

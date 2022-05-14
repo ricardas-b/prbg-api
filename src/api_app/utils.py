@@ -1,5 +1,8 @@
 import numpy
 
+from rest_framework.views import exception_handler
+
+
 
 def levenshtein_distance(substring, string):
     ''' Levenshtein distance is a string metric for measuring the difference
@@ -28,3 +31,15 @@ def levenshtein_distance(substring, string):
 
 
 # TODO: Consider other string similarity metrics, e.g. "Damerau–Levenshtein distance", etc.
+
+
+def custom_exception_handler(exc, context):
+    ''' Custom exception handler that overwrites payload of NotFound response
+        of DRF '''
+    
+    response = exception_handler(exc, context)
+
+    if response is not None:
+        response.data = {'message': 'Resource not found'}
+
+    return response
