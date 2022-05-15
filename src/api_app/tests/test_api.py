@@ -1,7 +1,6 @@
 import factory
 import unittest
 
-from django.http import QueryDict
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -36,8 +35,9 @@ class TestAuthorsResource(APITestCase):
         inputs = ['liam', 'Mill', 'Vyd', ]   # Use substrings from first, middle, and last names
         
         for input_ in inputs:
-            query = QueryDict(f'contains={input_}')
-            response_payload = self.client.get(f"{reverse('list-of-authors')}?{query.urlencode()}").json()
+            url = reverse('list-of-authors')
+            query = {'contains': input_}
+            response_payload = self.client.get(url, query).json()
             author_count = len(response_payload['results'])
             self.assertEqual(author_count, 1)
 
@@ -64,32 +64,37 @@ class TestBooksResource(APITestCase):
         inputs = ['Old Man', 'II', ]   # Use substrings from title and subtitle
 
         for input_ in inputs:
-            query = QueryDict(f'contains={input_}')
-            response_payload = self.client.get(f"{reverse('list-of-books')}?{query.urlencode()}").json()
+            url = reverse('list-of-books')
+            query = {'contains': input_}
+            response_payload = self.client.get(url, query).json()
             book_count = len(response_payload['results'])
             self.assertEqual(book_count, 1)
 
     def test_get_request_can_search_books_by_exact_year(self):
-        query = QueryDict('year=1940')
-        response_payload = self.client.get(f"{reverse('list-of-books')}?{query.urlencode()}").json()
+        url = reverse('list-of-books')
+        query = {'year': 1940}
+        response_payload = self.client.get(url, query).json()
         book_count = len(response_payload['results'])
         self.assertEqual(book_count, 1)
 
     def test_get_request_can_search_books_by_exact_isbn(self):
-        query = QueryDict('isbn=0684801221')
-        response_payload = self.client.get(f"{reverse('list-of-books')}?{query.urlencode()}").json()
+        url = reverse('list-of-books')
+        query = {'isbn': '0684801221'}
+        response_payload = self.client.get(url, query).json()
         book_count = len(response_payload['results'])
         self.assertEqual(book_count, 1)
 
     def test_get_request_can_search_books_by_author_id(self):
-        query = QueryDict('author=2')
-        response_payload = self.client.get(f"{reverse('list-of-books')}?{query.urlencode()}").json()
+        url = reverse('list-of-books')
+        query = {'author': 2}
+        response_payload = self.client.get(url, query).json()
         book_count = len(response_payload['results'])
         self.assertEqual(book_count, 3)
 
     def test_get_request_can_search_books_by_combination_of_params(self):
-        query = QueryDict('author=2&year=1952')
-        response_payload = self.client.get(f"{reverse('list-of-books')}?{query.urlencode()}").json()
+        url = reverse('list-of-books')
+        query = {'author': 2, 'year': 1952}
+        response_payload = self.client.get(url, query).json()
         book_count = len(response_payload['results'])
         self.assertEqual(book_count, 1)
 
@@ -116,8 +121,9 @@ class TestQuotesResource(APITestCase):
         self.assertEqual(quote_count, 4)
 
     def test_get_request_can_search_quotes_by_text_contains(self):
-        query = QueryDict(f'contains=cat')
-        response_payload = self.client.get(f"{reverse('list-of-quotes')}?{query.urlencode()}").json()
+        url = reverse('list-of-quotes')
+        query = {'contains': 'cat'}
+        response_payload = self.client.get(url, query).json()
         quote_count = len(response_payload['results'])
         self.assertEqual(quote_count, 1)
 
@@ -126,26 +132,30 @@ class TestQuotesResource(APITestCase):
         raise NotImplementedError
 
     def test_get_request_can_search_quotes_by_author_id(self):
-        query = QueryDict('author=2')
-        response_payload = self.client.get(f"{reverse('list-of-quotes')}?{query.urlencode()}").json()
+        url = reverse('list-of-quotes')
+        query = {'author': 2}
+        response_payload = self.client.get(url, query).json()
         quote_count = len(response_payload['results'])
         self.assertEqual(quote_count, 2)
 
     def test_get_request_can_search_quotes_by_book_id(self):
-        query = QueryDict('book=3')
-        response_payload = self.client.get(f"{reverse('list-of-quotes')}?{query.urlencode()}").json()
+        url = reverse('list-of-quotes')
+        query = {'book': 3}
+        response_payload = self.client.get(url, query).json()
         quote_count = len(response_payload['results'])
         self.assertEqual(quote_count, 1)
 
     def test_get_request_can_search_quotes_by_tag_ids(self):
-        query = QueryDict('tags=3,5')
-        response_payload = self.client.get(f"{reverse('list-of-quotes')}?{query.urlencode()}").json()
+        url = reverse('list-of-quotes')
+        query = {'tags': '3,5'}
+        response_payload = self.client.get(url, query).json()
         quote_count = len(response_payload['results'])
         self.assertEqual(quote_count, 1)
 
     def test_get_request_can_search_quotes_by_combination_of_params(self):
-        query = QueryDict('tags=3&author=1')
-        response_payload = self.client.get(f"{reverse('list-of-quotes')}?{query.urlencode()}").json()
+        url = reverse('list-of-quotes')
+        query = {'tags': '3', 'author': 1}
+        response_payload = self.client.get(url, query).json()
         quote_count = len(response_payload['results'])
         self.assertEqual(quote_count, 1)
 
@@ -166,26 +176,30 @@ class TestTagsResource(APITestCase):
         self.assertEqual(quote_count, 5)
 
     def test_get_request_can_search_tags_by_name_starts_with(self):
-        query = QueryDict(f'starts_with=wis')
-        response_payload = self.client.get(f"{reverse('list-of-tags')}?{query.urlencode()}").json()
+        url = reverse('list-of-tags')
+        query = {'starts_with': 'wis'}
+        response_payload = self.client.get(url, query).json()
         tag_count = len(response_payload['results'])
         self.assertEqual(tag_count, 1)
 
     def test_get_request_can_search_tags_by_name_contains(self):
-        query = QueryDict(f'starts_with=wis')
-        response_payload = self.client.get(f"{reverse('list-of-tags')}?{query.urlencode()}").json()
+        url = reverse('list-of-tags')
+        query = {'contains': 'dom'}
+        response_payload = self.client.get(url, query).json()
         tag_count = len(response_payload['results'])
         self.assertEqual(tag_count, 1)
 
     def test_get_request_can_search_tags_by_similar_name_of_similarity_lte_2(self):
-        query = QueryDict(f'similar_to=wise')
-        response_payload = self.client.get(f"{reverse('list-of-tags')}?{query.urlencode()}").json()
+        url = reverse('list-of-tags')
+        query = {'similar_to': 'wise'}
+        response_payload = self.client.get(url, query).json()
         tag_count = len(response_payload['results'])
         self.assertEqual(tag_count, 1)
 
     def test_get_request_can_search_tags_by_similar_name_and_skip_tags_of_similarity_gt_3(self):
-        query = QueryDict(f'similar_to=Danish')
-        response_payload = self.client.get(f"{reverse('list-of-tags')}?{query.urlencode()}").json()
+        url = reverse('list-of-tags')
+        query = {'similar_to': 'Danish'}
+        response_payload = self.client.get(url, query).json()        
         tag_count = len(response_payload['results'])
         self.assertEqual(tag_count, 0)
 
