@@ -1,4 +1,5 @@
 .idea/
+.tox/
 __pycache__/
 migrations/
 venv/
