@@ -27,8 +27,10 @@ class TestAuthorsResource(APITestCase):
         ]
     
     def test_get_request_can_fetch_authors(self):
-        response_payload = self.client.get(reverse('list-of-authors')).json()
-        author_count = len(response_payload['results'])
+        response = self.client.get(reverse('list-of-authors'))
+        payload = response.json()
+        author_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(author_count, 3)
 
     def test_get_request_can_search_authors_by_full_name_contains(self):
@@ -37,15 +39,19 @@ class TestAuthorsResource(APITestCase):
         for input_ in inputs:
             url = reverse('list-of-authors')
             query = {'contains': input_}
-            response_payload = self.client.get(url, query).json()
-            author_count = len(response_payload['results'])
+            response = self.client.get(url, query)
+            payload = response.json()
+            author_count = len(payload['results'])
+            self.assertEqual(response.status_code, 200)
             self.assertEqual(author_count, 1)
 
     def test_get_request_can_fetch_author_by_id(self):
         resource_id = 2
-        response_payload = self.client.get(f"{reverse('list-of-authors')}{resource_id}/").json()
-        self.assertIsInstance(response_payload, dict)
-        self.assertEqual(response_payload['id'], resource_id)
+        response = self.client.get(f"{reverse('list-of-authors')}{resource_id}/")
+        payload = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(payload, dict)
+        self.assertEqual(payload['id'], resource_id)
 
 
 
@@ -56,8 +62,10 @@ class TestBooksResource(APITestCase):
         ]
 
     def test_get_request_can_fetch_books(self):
-        response_payload = self.client.get(reverse('list-of-books')).json()
-        book_count = len(response_payload['results'])
+        response = self.client.get(reverse('list-of-books'))
+        payload = response.json()
+        book_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(book_count, 5)
 
     def test_get_request_can_search_books_by_full_title_contains(self):
@@ -66,43 +74,55 @@ class TestBooksResource(APITestCase):
         for input_ in inputs:
             url = reverse('list-of-books')
             query = {'contains': input_}
-            response_payload = self.client.get(url, query).json()
-            book_count = len(response_payload['results'])
+            response = self.client.get(url, query)
+            payload = response.json()
+            book_count = len(payload['results'])
+            self.assertEqual(response.status_code, 200)
             self.assertEqual(book_count, 1)
 
     def test_get_request_can_search_books_by_exact_year(self):
         url = reverse('list-of-books')
         query = {'year': 1940}
-        response_payload = self.client.get(url, query).json()
-        book_count = len(response_payload['results'])
+        response = self.client.get(url, query)
+        payload = response.json()
+        book_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(book_count, 1)
 
     def test_get_request_can_search_books_by_exact_isbn(self):
         url = reverse('list-of-books')
         query = {'isbn': '0684801221'}
-        response_payload = self.client.get(url, query).json()
-        book_count = len(response_payload['results'])
+        response = self.client.get(url, query)
+        payload = response.json()
+        book_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(book_count, 1)
 
     def test_get_request_can_search_books_by_author_id(self):
         url = reverse('list-of-books')
         query = {'author': 2}
-        response_payload = self.client.get(url, query).json()
-        book_count = len(response_payload['results'])
+        response = self.client.get(url, query)
+        payload = response.json()
+        book_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(book_count, 3)
 
     def test_get_request_can_search_books_by_combination_of_params(self):
         url = reverse('list-of-books')
         query = {'author': 2, 'year': 1952}
-        response_payload = self.client.get(url, query).json()
-        book_count = len(response_payload['results'])
+        response = self.client.get(url, query)
+        payload = response.json()
+        book_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(book_count, 1)
 
     def test_get_request_can_fetch_book_by_id(self):
         resource_id = 5
-        response_payload = self.client.get(f"{reverse('list-of-books')}{resource_id}/").json()
-        self.assertIsInstance(response_payload, dict)
-        self.assertEqual(response_payload['id'], resource_id)
+        response = self.client.get(f"{reverse('list-of-books')}{resource_id}/")
+        payload = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(payload, dict)
+        self.assertEqual(payload['id'], resource_id)
 
 
 
@@ -116,15 +136,19 @@ class TestQuotesResource(APITestCase):
         ]
 
     def test_get_request_can_fetch_quotes(self):
-        response_payload = self.client.get(reverse('list-of-quotes')).json()
-        quote_count = len(response_payload['results'])
+        response = self.client.get(reverse('list-of-quotes'))
+        payload = response.json()
+        quote_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(quote_count, 4)
 
     def test_get_request_can_search_quotes_by_text_contains(self):
         url = reverse('list-of-quotes')
         query = {'contains': 'cat'}
-        response_payload = self.client.get(url, query).json()
-        quote_count = len(response_payload['results'])
+        response = self.client.get(url, query)
+        payload = response.json()
+        quote_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(quote_count, 1)
 
     @unittest.skip('Test fixtures have no quotes that would contain dates')
@@ -134,36 +158,46 @@ class TestQuotesResource(APITestCase):
     def test_get_request_can_search_quotes_by_author_id(self):
         url = reverse('list-of-quotes')
         query = {'author': 2}
-        response_payload = self.client.get(url, query).json()
-        quote_count = len(response_payload['results'])
+        response = self.client.get(url, query)
+        payload = response.json()
+        quote_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(quote_count, 2)
 
     def test_get_request_can_search_quotes_by_book_id(self):
         url = reverse('list-of-quotes')
         query = {'book': 3}
-        response_payload = self.client.get(url, query).json()
-        quote_count = len(response_payload['results'])
+        response = self.client.get(url, query)
+        payload = response.json()
+        quote_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(quote_count, 1)
 
     def test_get_request_can_search_quotes_by_tag_ids(self):
         url = reverse('list-of-quotes')
         query = {'tags': '3,5'}
-        response_payload = self.client.get(url, query).json()
-        quote_count = len(response_payload['results'])
+        response = self.client.get(url, query)
+        payload = response.json()
+        quote_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(quote_count, 1)
 
     def test_get_request_can_search_quotes_by_combination_of_params(self):
         url = reverse('list-of-quotes')
         query = {'tags': '3', 'author': 1}
-        response_payload = self.client.get(url, query).json()
-        quote_count = len(response_payload['results'])
+        response = self.client.get(url, query)
+        payload = response.json()
+        quote_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(quote_count, 1)
 
     def test_get_request_can_fetch_quote_by_id(self):
         resource_id = 2
-        response_payload = self.client.get(f"{reverse('list-of-quotes')}{resource_id}/").json()
-        self.assertIsInstance(response_payload, dict)
-        self.assertEqual(response_payload['id'], resource_id)
+        response = self.client.get(f"{reverse('list-of-quotes')}{resource_id}/")
+        payload = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(payload, dict)
+        self.assertEqual(payload['id'], resource_id)
 
 
 
@@ -171,43 +205,55 @@ class TestTagsResource(APITestCase):
     fixtures = ['tags.json', ]
 
     def test_get_request_can_fetch_tags(self):
-        response_payload = self.client.get(reverse('list-of-tags')).json()
-        quote_count = len(response_payload['results'])
+        response = self.client.get(reverse('list-of-tags'))
+        payload = response.json()
+        quote_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(quote_count, 5)
 
     def test_get_request_can_search_tags_by_name_starts_with(self):
         url = reverse('list-of-tags')
         query = {'starts_with': 'wis'}
-        response_payload = self.client.get(url, query).json()
-        tag_count = len(response_payload['results'])
+        response = self.client.get(url, query)
+        payload = response.json()
+        tag_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(tag_count, 1)
 
     def test_get_request_can_search_tags_by_name_contains(self):
         url = reverse('list-of-tags')
         query = {'contains': 'dom'}
-        response_payload = self.client.get(url, query).json()
-        tag_count = len(response_payload['results'])
+        response = self.client.get(url, query)
+        payload = response.json()
+        tag_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(tag_count, 1)
 
     def test_get_request_can_search_tags_by_similar_name_of_similarity_lte_2(self):
         url = reverse('list-of-tags')
         query = {'similar_to': 'wise'}
-        response_payload = self.client.get(url, query).json()
-        tag_count = len(response_payload['results'])
+        response = self.client.get(url, query)
+        payload = response.json()
+        tag_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(tag_count, 1)
 
     def test_get_request_can_search_tags_by_similar_name_and_skip_tags_of_similarity_gt_3(self):
         url = reverse('list-of-tags')
         query = {'similar_to': 'Danish'}
-        response_payload = self.client.get(url, query).json()        
-        tag_count = len(response_payload['results'])
+        response = self.client.get(url, query)
+        payload = response.json()
+        tag_count = len(payload['results'])
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(tag_count, 0)
 
     def test_get_request_can_fetch_tag_by_id(self):
         resource_id = 5
-        response_payload = self.client.get(f"{reverse('list-of-tags')}{resource_id}/").json()
-        self.assertIsInstance(response_payload, dict)
-        self.assertEqual(response_payload['id'], resource_id)
+        response = self.client.get(f"{reverse('list-of-tags')}{resource_id}/")
+        payload = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(payload, dict)
+        self.assertEqual(payload['id'], resource_id)
 
 
 
@@ -221,9 +267,11 @@ class TestRandomQuotesResource(APITestCase):
         ]
 
     def test_get_request_can_fetch_random_quote(self):
-        response_payload = self.client.get(reverse('random-quote-details')).json()
-        self.assertIsInstance(response_payload, dict)
-        self.assertIsInstance(response_payload['id'], int)
+        response = self.client.get(reverse('random-quote-details'))
+        payload = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(payload, dict)
+        self.assertIsInstance(payload['id'], int)
 
 
 
