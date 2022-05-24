@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Author(models.Model):
     first_name = models.CharField(max_length=64, null=True, blank=True)
     middle_name = models.CharField(max_length=64, null=True, blank=True)

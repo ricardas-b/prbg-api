@@ -1,3 +1,5 @@
+import os
+
 from dotenv import dotenv_values
 from pathlib import Path
 
@@ -32,6 +34,7 @@ INSTALLED_APPS = [
     'corsheaders',
 
     'api_app',   # Local apps
+    'quote_admin_app',
 
 ]
 
@@ -65,6 +68,10 @@ TEMPLATES = [
             ],
         },
     },
+]
+
+TEMPLATE_DIRS = [
+    os.path.join(BASE_DIR, 'quote_admin_app', 'templates/'),
 ]
 
 

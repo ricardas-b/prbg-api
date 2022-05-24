@@ -1,0 +1,58 @@
+
+
+<style>
+a {
+    font-size: 20px;
+}
+
+form textarea {
+    width: 50%;
+    height: 25%;
+    font-size: 16px;
+}
+</style>
+
+<a href="/api/v1/show-quote/{{ pk | add:-1 }}/"> &lt;&lt; prev</a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="/api/v1/show-quote/{{ pk | add:1 }}/">next &gt;&gt; </a>
+<br>
+<br>
+<hr>
+
+<form action="/api/v1/update-quote/{{ pk }}/" method="post">
+    {% csrf_token %}
+    {{ quote_form.as_p }}
+    <input type="submit" value="Update Quote">
+</form>
+
+<hr>
+
+
+
+<form action="/api/v1/update-tags/{{ pk }}/" method="post">
+    {% csrf_token %}
+    <fieldset>
+        <legend>Selected tags</legend>
+        <ul>
+            {% for tag_id, tag_name, is_selected in all_tags %}
+                <div>
+                    <li style="display: block; float: left; width: 15%">
+                        <input type="checkbox" name="tag_selection" id="{{ tag_id }}" value="{{ tag_id }}"
+                            {% if is_selected %}
+                                    checked
+                               {% endif %}
+                        >
+                        <label for="{{ tag_id }}"> {{ tag_name }} </label>
+                    </li>
+                </div>
+            {% endfor %}
+        </ul>
+    </fieldset>
+    <br>
+    <div>
+        <button type="submit">Update Tags</button>
+    </div>
+
+</form>
+
+<hr>
