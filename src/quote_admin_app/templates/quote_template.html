@@ -26,7 +26,12 @@ form textarea {
 </form>
 
 <hr>
-
+<br>
+<div>
+    Current selection: {{ selected_tag_values }}
+</div>
+<br>
+<br>
 
 
 <form action="/api/v1/update-tags/{{ pk }}/" method="post">
@@ -36,7 +41,7 @@ form textarea {
         <ul>
             {% for tag_id, tag_name, is_selected in all_tags %}
                 <div>
-                    <li style="display: block; float: left; width: 15%">
+                    <li style="display: block; float: down; width: 15%">
                         <input type="checkbox" name="tag_selection" id="{{ tag_id }}" value="{{ tag_id }}"
                             {% if is_selected %}
                                     checked
@@ -56,3 +61,5 @@ form textarea {
 </form>
 
 <hr>
+<br>
+<br>

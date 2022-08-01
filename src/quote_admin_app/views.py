@@ -21,16 +21,22 @@ def show_quote_with_tags(request, pk):
         selected_tags = list(QuoteTag.objects.filter(quote=pk).values())
         selected_tags = [tag['tag_id'] for tag in selected_tags]
 
+        selected_tag_values = []
+
         for tag in all_tags:
             if tag[0] in selected_tags:
                 tag.append(True)
+                selected_tag_values.append(tag[1])
             else:
                 tag.append(False)
+
+        selected_tag_values = ', '.join(selected_tag_values)
 
         context = {
             'pk': pk,
             'quote_form': quote_form,
-            'all_tags': all_tags
+            'all_tags': all_tags,
+            'selected_tag_values': selected_tag_values,
         }
 
         return render(request, 'quote_template.html', context)
@@ -59,8 +65,7 @@ def update_tags(request, pk):
 
         for tag_id in old_tag_selection:
             if tag_id not in new_tag_selection:
-                qs = QuoteTag.objects.get(quote=pk, tag=tag_id)
-                qs.delete()
+                QuoteTag.objects.get(quote=pk, tag=tag_id).delete()
 
         return redirect(f'/api/v1/show-quote/{pk}/')
 
