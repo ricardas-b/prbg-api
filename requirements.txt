@@ -6,6 +6,8 @@ factory-boy==3.2.1
 numpy==1.22.3
 python-dotenv==0.20.0
 pytz==2022.1
+PyYAML==6.0
 sqlparse==0.4.2
 tox==3.25.0
 tzdata==2022.1
+uritemplate==4.1.1

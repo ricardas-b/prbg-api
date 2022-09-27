@@ -1,13 +1,9 @@
-openapi: 3.0.0
+openapi: 3.0.2
 info:
-  title: prbg-api
-  version: 1.0.0
-  description: Authors and their books, quotes and associated tags
-servers:
-  - url:
-     http://localhost:8000/api/vi
+  title: 'Quote API'
+  version: '1.0.0'
 paths:
-  /authors:
+  /api/v1/authors/:
     get:
       operationId: listAuthors
       description: ''
@@ -15,17 +11,9 @@ paths:
       - name: page
         required: false
         in: query
-        description: A page number within the paginated result set
+        description: A page number within the paginated result set.
         schema:
           type: integer
-          example: 2
-      - name: contains
-        required: false
-        in: query
-        description: Search for authors by substring
-        schema:
-          type: string
-          example: "baltuš"
       responses:
         '200':
           content:
@@ -53,7 +41,7 @@ paths:
           description: ''
       tags:
       - api
-  /books:
+  /api/v1/books/:
     get:
       operationId: listBooks
       description: ''
@@ -61,38 +49,9 @@ paths:
       - name: page
         required: false
         in: query
-        description: A page number within the paginated result set
+        description: A page number within the paginated result set.
         schema:
           type: integer
-          example: 2
-      - name: contains
-        required: false
-        in: query
-        description: Search for books by substring
-        schema:
-          type: string
-          example: "dienor"
-      - name: year
-        required: false
-        in: query
-        description: Search for quotes by publication year
-        schema:
-          type: integer
-          example: 2019
-      - name: isbn
-        required: false
-        in: query
-        description: Search for books by ISBN
-        schema:
-          type: string
-          example: "9786094800580"
-      - name: author
-        required: false
-        in: query
-        description: Search for books by author ID
-        schema:
-          type: integer
-          example: 1
       responses:
         '200':
           content:
@@ -120,7 +79,7 @@ paths:
           description: ''
       tags:
       - api
-  /quotes:
+  /api/v1/quotes/:
     get:
       operationId: listQuotes
       description: ''
@@ -128,45 +87,9 @@ paths:
       - name: page
         required: false
         in: query
-        description: A page number within the paginated result set
+        description: A page number within the paginated result set.
         schema:
           type: integer
-          example: 2
-      - name: contains
-        required: false
-        in: query
-        description: Search for quotes by substring
-        schema:
-          type: string
-          example: "vairuo"
-      - name: date
-        required: false
-        in: query
-        description: Search for quotes by date
-        schema:
-          type: string
-          example: "1970-03-28"
-      - name: author
-        required: false
-        in: query
-        description: Search for quotes by author ID
-        schema:
-          type: integer
-          example: 1
-      - name: book
-        required: false
-        in: query
-        description: Search for quotes by book ID
-        schema:
-          type: integer
-          example: 3
-      - name: tags
-        required: false
-        in: query
-        description: Search for quotes by tag IDs
-        schema:
-          type: string
-          example: "1,2,3, ..."
       responses:
         '200':
           content:
@@ -194,7 +117,7 @@ paths:
           description: ''
       tags:
       - api
-  /tags:
+  /api/v1/tags/:
     get:
       operationId: listTags
       description: ''
@@ -202,30 +125,9 @@ paths:
       - name: page
         required: false
         in: query
-        description: A page number within the paginated result set
+        description: A page number within the paginated result set.
         schema:
           type: integer
-      - name: starts_with
-        required: false
-        in: query
-        description: Search for tags by substring
-        schema:
-          type: string
-          example: "komun"
-      - name: contains
-        required: false
-        in: query
-        description: Search for tags by substring
-        schema:
-          type: string
-          example: "izm"
-      - name: similar_to
-        required: false
-        in: query
-        description: Search for tags by substring
-        schema:
-          type: string
-          example: "kuriba"
       responses:
         '200':
           content:
@@ -253,7 +155,7 @@ paths:
           description: ''
       tags:
       - api
-  /authors/{id}:
+  /api/v1/authors/{id}/:
     get:
       operationId: retrieveAuthor
       description: ''
@@ -273,7 +175,7 @@ paths:
           description: ''
       tags:
       - api
-  /books/{id}:
+  /api/v1/books/{id}/:
     get:
       operationId: retrieveBook
       description: ''
@@ -293,7 +195,7 @@ paths:
           description: ''
       tags:
       - api
-  /quotes/{id}:
+  /api/v1/quotes/{id}/:
     get:
       operationId: retrieveQuote
       description: ''
@@ -313,20 +215,7 @@ paths:
           description: ''
       tags:
       - api
-  /quotes/random:
-    get:
-      operationId: retrieveRandomQuote
-      description: ''
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Quote'
-          description: ''
-      tags:
-      - api
-  /tags/{id}:
+  /api/v1/tags/{id}/:
     get:
       operationId: retrieveTag
       description: ''
@@ -343,6 +232,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Tag'
+          description: ''
+      tags:
+      - api
+  /api/v1/quotes/random/:
+    get:
+      operationId: listQuotes
+      description: ''
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=4
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=2
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Quote'
           description: ''
       tags:
       - api
@@ -446,8 +373,8 @@ components:
         id:
           type: integer
           readOnly: true
-        tag:
+        name:
           type: string
           maxLength: 64
       required:
-      - tag
+      - name

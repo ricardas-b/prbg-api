@@ -52,6 +52,8 @@ class AuthorList(ListAPIView):
 
 
 class AuthorDetails(GenericAPIView):
+    serializer_class = AuthorSerializer
+
     def get(self, request, pk, format=None):
         author = get_object(Author, pk)
         serializer = AuthorSerializer(author, context={'request': request})
@@ -110,6 +112,8 @@ class BookList(ListAPIView):
 
 
 class BookDetails(GenericAPIView):
+    serializer_class = BookSerializer
+
     def get(self, request, pk, format=None):
         book = get_object(Book, pk)
         serializer = BookSerializer(book, context={'request': request})
@@ -201,6 +205,8 @@ class QuoteList(ListAPIView):
 
 
 class QuoteDetails(GenericAPIView):
+    serializer_class = QuoteSerializer
+
     def get(self, request, pk, format=None):
         quote = get_object(Quote, pk)
         serializer = QuoteSerializer(quote, context={'request': request})
@@ -271,6 +277,8 @@ class TagList(ListAPIView):
 
 
 class TagDetails(GenericAPIView):
+    serializer_class = TagSerializer
+
     def get(self, request, pk, format=None):
         tag = get_object(Tag, pk)
         serializer = TagSerializer(tag, context={'request': request})
@@ -278,6 +286,8 @@ class TagDetails(GenericAPIView):
 
 
 class RandomQuoteDetails(GenericAPIView):
+    serializer_class = QuoteSerializer
+
     def get(self, request, format=None):
         pks = Quote.objects.values_list('pk', flat=True)
         random_pk = random.choice(pks)
